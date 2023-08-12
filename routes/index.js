@@ -80,7 +80,8 @@ router.get('/hackerboard', function (req, res, next) {
             taskStats.push({
               x: new Date(team.taskStats[taskName].time * 1000),
               y: cumulativePoints,
-              teamname: team.teamname
+              teamname: team.teamname,
+             
             });
           }
         }
@@ -119,6 +120,8 @@ router.get('/hackerboard', function (req, res, next) {
       }
 
       var hello = data.standings.map(entry => { return entry }) 
+      var hello2 = data.standings.map(entry => { return entry }) 
+      console.log(hello);
       // Now parsedData contains the sorted inner data for each team
       res.render('scoreboard', { title: 'Hackerboard', layout: 'baseLayout', jsonData: hello});
     })
@@ -154,7 +157,7 @@ router.get('/score', function (req, res, next) {
 
         return teamStats;
       });
-
+      
       const resultJson = {
         standings: newStandings
       };
