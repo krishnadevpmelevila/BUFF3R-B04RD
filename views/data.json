@@ -1,0 +1,51 @@
+{
+    "standings": [
+        {
+            "id": 1,
+            "lastAccept": 1691818975,
+            "pos": 1,
+            "score": 250,
+            "taskStats": {
+                "test": {
+                    "points": 100,
+                    "time": 1691818975
+                },
+                "test2": {
+                    "points": 150,
+                    "time": 1691812408
+                }
+            },
+            "team": "test1"
+        },
+        {
+            "id": 3,
+            "lastAccept": 1691812370,
+            "pos": 2,
+            "score": 100,
+            "taskStats": {
+                "test": {
+                    "points": 100,
+                    "time": 1691812370
+                }
+            },
+            "team": "ozone"
+        },
+        {
+            "id": 2,
+            "lastAccept": 1691812402,
+            "pos": 3,
+            "score": 100,
+            "taskStats": {
+                "test": {
+                    "points": 100,
+                    "time": 1691812402
+                }
+            },
+            "team": "test2"
+        }
+    ],
+    "tasks": [
+        "test",
+        "test2"
+    ]
+}

@@ -52,14 +52,14 @@
                         
                         {{#each jsonData}}
                         <tr>
-                            <th id="pos" scope="row">{{pos}}</th>
-                            <td>{{team}}</td>
-                            <td id="count-{{team}}"></td>
-                            <td>{{score}}</td>
+                            <th id="pos" scope="row">{{this.pos}}</th>
+                            <td>{{this.team}}</td>
+                            <td id="count-{{this.team}}"></td>
+                            <td>{{this.score}}</td>
                         </tr>
                         <script>
 
-                            {{#each this.taskStats}}
+                            {{#each this.sortedTaskStats}}
                            
                             count = count+1
                             {{/each}}
@@ -67,7 +67,7 @@
                         </script>
                            
                             <script>
-                                document.getElementById("count-{{team}}").innerHTML = count;
+                                document.getElementById("count-{{this.team}}").innerHTML = count;
                                  count=0
                             </script>
                              {{/each}}
@@ -99,19 +99,19 @@
 <script>
     
         var datasets = [];
-  
           {{#each jsonData}}
+            console.log("{{this.team}}")
         
             var teamData = {
-                label: '{{team}}',
+                label: '{{this.team}}',
                 borderColor: getRandomColor(),
                 steppedLine: true,
           
                 data: [
-                    {{#each this.cumulativeTaskStats}}
-                    {
-                        x: formatDateToCustomFormat(new Date('{{x}}')),
-                        y: "{{y}}"
+                    {{#each this.sortedTaskStats}}
+                    {   
+                        x: formatDateToCustomFormat(new Date({{this.time}})),
+                        y: "{{this.totalScore}}"
                     },
                     {{/each}}
                 ]
@@ -155,6 +155,25 @@
       }
   });
   
+function convertUnixTimestamp(timestamp) {
+    const date = new Date(timestamp * 1000);
+    const options = {
+        weekday: 'short',
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        timeZoneName: 'short'
+    };
+    return formatDateToCustomFormat(('en-US', options));
+}
+
+
+
+
+
 
   function getRandomColor() {
         var letters = '0123456789ABCDEF';

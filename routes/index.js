@@ -43,30 +43,30 @@ router.get('/hackerboard', function (req, res, next) {
 
       data.standings.forEach(entry => {
         const team = entry.team;
-    
+
         // Reverse the taskStats for cumulative calculation
         const reversedTaskStats = Object.entries(entry.taskStats).reverse();
-    
+
         let cumulativePoints = 0;
         const cumulativeTaskStats = [];
-    
+
         reversedTaskStats.forEach(([taskName, taskData]) => {
-            cumulativePoints += taskData.points;
-    
-            cumulativeTaskStats.push({
-                x: new Date(taskData.time * 1000),
-                y: cumulativePoints,
-                teamname: team,
-                task: taskName
-            });
+          cumulativePoints += taskData.points;
+
+          cumulativeTaskStats.push({
+            x: new Date(taskData.time * 1000),
+            y: cumulativePoints,
+            teamname: team,
+            task: taskName
+          });
         });
-    
+
         entry.cumulativeTaskStats = cumulativeTaskStats.reverse(); // Reverse back to original order
-    });
+      });
 
-    
 
-    
+
+
 
       const taskStats = [];
       resultJson.standings.forEach(team => {
@@ -81,7 +81,7 @@ router.get('/hackerboard', function (req, res, next) {
               x: new Date(team.taskStats[taskName].time * 1000),
               y: cumulativePoints,
               teamname: team.teamname,
-             
+
             });
           }
         }
@@ -119,11 +119,55 @@ router.get('/hackerboard', function (req, res, next) {
         }
       }
 
-      var hello = data.standings.map(entry => { return entry }) 
-      var hello2 = data.standings.map(entry => { return entry }) 
-      console.log(hello);
-      // Now parsedData contains the sorted inner data for each team
-      res.render('scoreboard', { title: 'Hackerboard', layout: 'baseLayout', jsonData: hello});
+      var hello = data.standings.map(entry => { return entry })
+
+
+      const { spawn } = require('child_process');
+      // console.log(hello);
+      const inputData = {
+        "standings": [hello]
+      };
+
+      const pythonProcess = spawn('python3', ['sort.py'], {
+        stdio: ['pipe', 'pipe', 'pipe', 'ipc'] // Add this line for inter-process communication
+      });
+
+      pythonProcess.stdin.write(JSON.stringify(inputData));
+      pythonProcess.stdin.end();
+
+      pythonProcess.on('message', (message) => {
+        // Process the received message (the processed data)
+        console.log('Received processed data:');
+        console.log(JSON.parse(message));
+      });
+
+      pythonProcess.stderr.on('data', (data) => {
+        console.error(`Python script error: ${data}`);
+      });
+      pythonProcess.stdout.on('data', (data) => {
+        s=JSON.parse( data.toString())
+        s=s['standings'][0]
+        for (const entry of s) {
+          let totalScore = 0;
+          for (const stat of entry.sortedTaskStats) {
+            totalScore += stat.points;
+            stat.totalScore = totalScore;
+          }
+        }
+        
+        console.log(s[0].sortedTaskStats);
+        res.render('scoreboard', { title: 'Hackerboard', layout: 'baseLayout', jsonData: s});
+        
+      });
+
+      pythonProcess.on('close', (code) => {
+        if (code === 0) {
+          console.log('Python script execution completed successfully.');
+        } else {
+          console.error('Python script encountered an error.');
+        }
+      });
+     
     })
     .catch(error => {
       console.error('Error fetching data:', error);
@@ -157,7 +201,7 @@ router.get('/score', function (req, res, next) {
 
         return teamStats;
       });
-      
+
       const resultJson = {
         standings: newStandings
       };
