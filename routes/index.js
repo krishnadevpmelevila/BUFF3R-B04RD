@@ -1,6 +1,8 @@
 var express = require('express');
 var router = express.Router();
 const axios = require('axios');
+require('dotenv').config();
+
 /* GET home page. */
 router.get('/', function (req, res, next) {
   res.render('index', { title: 'Home' });
@@ -9,7 +11,7 @@ router.get('/about', function (req, res, next) {
   res.render('about', { title: 'About', layout: 'baseLayout' });
 });
 router.get('/hackerboard', function (req, res, next) {
-  const url = 'http://44.211.138.118:4000/scores';
+  const url = process.env.CTFD_URL+'/scores';
 
   axios.get(url)
     .then(response => {
@@ -145,8 +147,8 @@ router.get('/hackerboard', function (req, res, next) {
         console.error(`Python script error: ${data}`);
       });
       pythonProcess.stdout.on('data', (data) => {
-        s=JSON.parse( data.toString())
-        s=s['standings'][0]
+        s = JSON.parse(data.toString())
+        s = s['standings'][0]
         for (const entry of s) {
           let totalScore = 0;
           for (const stat of entry.sortedTaskStats) {
@@ -154,10 +156,10 @@ router.get('/hackerboard', function (req, res, next) {
             stat.totalScore = totalScore;
           }
         }
-        
+
         console.log(s[0].sortedTaskStats);
-        res.render('scoreboard', { title: 'Hackerboard', layout: 'baseLayout', jsonData: s});
-        
+        res.render('scoreboard', { title: 'Hackerboard', layout: 'baseLayout', jsonData: s });
+
       });
 
       pythonProcess.on('close', (code) => {
@@ -167,7 +169,7 @@ router.get('/hackerboard', function (req, res, next) {
           console.error('Python script encountered an error.');
         }
       });
-     
+
     })
     .catch(error => {
       console.error('Error fetching data:', error);
@@ -213,4 +215,79 @@ router.get('/score', function (req, res, next) {
     });
 
 })
+
+router.get('/challenge', function (req, res, next) {
+  const headers = {
+    'Authorization': 'Token ' + process.env.API_TOKEN,
+    'Content-Type': 'application/json'
+  };
+
+  axios.get(process.env.API_URL + '/challenges', { headers })
+    .then(response => {
+      console.log('Response:', response.data);
+      res.render('challengePage', { title: 'Challenge', layout: 'baseLayout', challengeData: response.data.data });
+
+    })
+    .catch(error => {
+      console.error('Error:', error);
+    });
+
+});
+
+
+router.get('/register', function (req, res, next) {
+
+  res.render('register', { title: 'Register', layout: 'baseLayout' });
+
+
+});
+router.post('/login', function (req, res, next) {
+  const headers = {
+    'Authorization': 'Token ' + process.env.API_TOKEN,
+    'Content-Type': 'application/json'
+  };
+  axios.get(process.env.API_URL + '/users', { headers })
+    .then(response => {
+      // check every response.data.data for username and password
+      // if username and password match, redirect to hackerboard
+      // else redirect to login
+      var username = req.body.username;
+      var password = req.body.password;
+      var flag = 0;
+      for (var i = 0; i < response.data.data.length; i++) {
+        if (response.data.data[i].name == username) {
+          axios.get(process.env.API_URL + '/users/' + response.data.data[i].id, { headers }).then(newres => {
+           console.log('Response:', newres.data);
+          
+          })
+        }
+      }
+      if (flag == 1) {
+        res.redirect('/hackerboard');
+      }
+      else {
+        res.redirect('/login');
+      }
+    })
+  });
+
+router.get('/login', function (req, res, next) {
+  
+    res.render('login', { title: 'Login', layout: 'baseLayout' });
+})
+
+router.post('/register', function (req, res, next) {
+  const headers = {
+    'Authorization': 'Token ' + process.env.API_TOKEN,
+    'Content-Type': 'application/json'
+  };
+  axios.post(process.env.API_URL + '/users', {
+    name: req.body.username,
+    password: req.body.password,
+    email: req.body.email
+  }, { headers })
+    .then(response => {
+      console.log('Response:', response.data);
+    })
+});
 module.exports = router;

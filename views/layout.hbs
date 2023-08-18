@@ -17,6 +17,7 @@
     <link rel='stylesheet' href='//cdn.jsdelivr.net/font-hack/2.020/css/hack.min.css'>
     <link rel="stylesheet" href="css/main.css">
 </head>
+
 <body class="imgloaded">
 
 
@@ -36,9 +37,9 @@
         <div class="navbar-dark text-white">
             <div class="container">
                 <nav class="navbar px-0 navbar-expand-lg navbar-dark">
-                    <button style="background-color: #c91919 !important;" class="navbar-toggler" type="button" data-toggle="collapse"
-                        data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false"
-                        aria-label="Toggle navigation">
+                    <button style="background-color: #c91919 !important;" class="navbar-toggler" type="button"
+                        data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup"
+                        aria-expanded="false" aria-label="Toggle navigation">
                         <span class="navbar-toggler-icon"></span>
                     </button>
                     <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
@@ -49,33 +50,35 @@
                             </a>
                         </div>
                         <div class="navbar-nav ml-auto">
-                            <a href="/" class="p-3 text-decoration-none text-white bold">Home</a>
+                            <a href="/" class="p-3 text-decoration-none text-light bold">Home</a>
                             <a href="about" class="p-3 text-decoration-none text-light bold">About</a>
+                            <a href="challenge" class="p-3 text-decoration-none text-light bold">Challenges</a>
                             <a href="hackerboard" class="p-3 text-decoration-none text-light bold">Hackerboard</a>
-                            <a href="http://44.211.138.118:8000/login"
-                                class="p-3 text-decoration-none text-light bold">Login</a>
-                            <a href="http://44.211.138.118:8000/register" class="p-3 text-decoration-none text-light bold">Register</a>
+                            <a href="/login" class="p-3 text-decoration-none text-light bold">Login</a>
+                            <a href="/register" class="p-3 text-decoration-none text-light bold">Register</a>
                         </div>
                     </div>
                 </nav>
 
             </div>
         </div>
-  <body>
-    <audio id="bgm" src="images/l.mp3" autoplay loop muted></audio>
+
+        <body>
+            <audio id="bgm" src="images/l.mp3" autoplay loop muted></audio>
 
 
-    <script>
-        const audio = document.getElementById('bgm');
+            <script>
+                const audio = document.getElementById('bgm');
 
-        document.addEventListener('click', () => {
-            audio.muted = false;
-            audio.play();
-        });
-        
+                document.addEventListener('click', () => {
+                    audio.muted = false;
+                    audio.play();
+                });
 
 
-    </script>
-    {{{body}}}
-  </body>
+
+            </script>
+            {{{body}}}
+        </body>
+
 </html>
